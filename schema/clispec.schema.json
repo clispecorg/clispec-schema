@@ -1,0 +1,192 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/ICLISpec",
+  "definitions": {
+    "ICLISpec": {
+      "title": "ICLISpec",
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "title": "$schema"
+        },
+        "command": {
+          "$ref": "#/definitions/ICommandSpec",
+          "title": "command",
+          "description": "Root command specification"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "command"
+      ]
+    },
+    "ICommandSpec": {
+      "title": "ICommandSpec",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "name"
+        },
+        "summary": {
+          "type": "string",
+          "title": "summary"
+        },
+        "description": {
+          "type": "string",
+          "title": "description"
+        },
+        "options": {
+          "title": "options",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/IOptionSpec"
+          }
+        },
+        "setup": {
+          "title": "setup",
+          "description": "Initial setup instructions preparing environment for execution cmd",
+          "$ref":  "#/definitions/ICommandExecutable"
+        },
+        "cmd": {
+          "title": "cmd",
+          "description": "Execution instructions of command.",
+          "$ref":  "#/definitions/ICommandExecutable"
+        },
+        "env": {
+          "title": "env",
+          "description": "Environment variables for execute \"cmd\" instructions.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "commands": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ICommandSpec"
+          },
+          "title": "commands"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IOptionSpec": {
+      "description": "CLI Option",
+      "title": "IOptionSpec",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "value": {
+          "type": "object",
+          "required": [],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "title": "type",
+              "description": "Base option value type",
+              "$ref": "#/definitions/SimpleType",
+              "default": "string"
+            },
+            "optional": {
+              "title": "optional",
+              "description": "Value can be not specified",
+              "type": "boolean"
+            },
+            "enum": {
+              "$comment": "TODO: items type must be dependent baseType",
+              "title": "enum",
+              "description": "Possible values enumeration. Specify custom: true for allow not enumerated values.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "custom": {
+              "description": "Allow custom values if specified enum.",
+              "type": "boolean",
+              "title": "custom"
+            },
+            "negatable": {
+              "description": "Allow using --no prefix with this option",
+              "type": "boolean",
+              "title": "negatable"
+            },
+            "default": {
+              "description": "Default value",
+              "title": "default"
+            }
+          }
+        },
+        "required": {
+          "description": "Options is required",
+          "type": "boolean",
+          "title": "required"
+        },
+        "summary": {
+          "description": "Short description.",
+          "type": "string",
+          "title": "summary"
+        },
+        "description": {
+          "description": "Long description.",
+          "type": "string",
+          "title": "description"
+        },
+        "short": {
+          "description": "Short option name.",
+          "type": "string",
+          "title": "short"
+        },
+        "long": {
+          "description": "Long option name.",
+          "type": "string",
+          "title": "long"
+        },
+        "standalone": {
+          "description": "Can not use with other options.",
+          "type": "boolean",
+          "title": "standalone"
+        },
+        "env": {
+          "description": "TODO: Add description",
+          "type": "string",
+          "title": "env"
+        },
+        "hidden": {
+          "type": "boolean",
+          "description": "Exclude options from the help and completion commands"
+        }
+      }
+    },
+    "SimpleType": {
+      "title": "SimpleType",
+      "enum": [
+        "boolean",
+        "integer",
+        "number",
+        "string"
+      ],
+      "type": "string"
+    },
+    "ICommandExecutable": {
+      "title": "ICommandExecutable",
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  }
+}
